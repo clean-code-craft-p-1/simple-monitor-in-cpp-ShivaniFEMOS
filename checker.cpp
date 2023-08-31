@@ -1,12 +1,14 @@
 #include <iostream>
 #include <unistd.h>
 #include <cassert>
+#include <functional>
+#include <vector>
 
 using namespace std;
 
 struct VitalsCheck {
     string alertMessage;
-    bool (*checkFunction)(float);
+    function<bool(float)> checkFunction;
 };
 
 bool isTemperatureOutOfRange(float temperature) {
@@ -32,17 +34,13 @@ void displayAlert(const string &message) {
 }
 
 int vitalsOk(float temperature, float pulseRate, float spo2) {
-    VitalsCheck checks[] = {
+    vector<VitalsCheck> checks = {
         {"Temperature critical!", isTemperatureOutOfRange},
         {"Pulse Rate is out of range!", isPulseRateOutOfRange},
         {"Oxygen Saturation out of range!", isSpo2OutOfRange}
     };
 
     for (const auto &check : checks) {
-        if (check.checkFunction == nullptr) {
-            continue;
-        }
-
         if (check.checkFunction(temperature) ||
             check.checkFunction(pulseRate) ||
             check.checkFunction(spo2)) {

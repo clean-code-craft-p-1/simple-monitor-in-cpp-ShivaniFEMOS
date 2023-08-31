@@ -56,26 +56,15 @@ int vitalsOk(float temperature, float pulseRate, float spo2) {
 }
 
 void testVitals() {
-    // Temperature critical, Pulse Rate OK, Spo2 OK
-    assert(!vitalsOk(99, 70, 98));
-
-    // Temperature OK, Pulse Rate out of range, Spo2 OK
-    assert(!vitalsOk(98.1, 40, 98));
-
-    // Temperature OK, Pulse Rate OK, Spo2 out of range
-    assert(!vitalsOk(98.6, 75, 85));
-
-    // All vitals OK
+	
+    assert(!vitalsOk(99, 102, 70));
+    assert(vitalsOk(98.1, 70, 98));
+    assert(!vitalsOk(95, 59, 95));
+    assert(!vitalsOk(101, 100, 89));
+    assert(!vitalsOk(96, 105, 96));
+    assert(!vitalsOk(98, 80, 85));
     assert(vitalsOk(98.6, 75, 92));
 
-    // Temperature critical, Pulse Rate out of range, Spo2 out of range
-    assert(!vitalsOk(104, 105, 80));
-
-    // Temperature critical, Pulse Rate OK, Spo2 out of range
-    assert(!vitalsOk(100, 75, 85));
-
-    // Temperature OK, Pulse Rate critical, Spo2 out of range
-    assert(!vitalsOk(98.6, 105, 85));
 }
 
 int main() {

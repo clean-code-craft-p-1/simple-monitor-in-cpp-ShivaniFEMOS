@@ -4,7 +4,10 @@
 
 using namespace std;
 
-// Separate pure functions from I/O
+struct VitalsCheck {
+    string alertMessage;
+    bool (*checkFunction)(float);
+};
 
 bool isTemperatureOutOfRange(float temperature) {
     return temperature > 102 || temperature < 95;
@@ -29,20 +32,27 @@ void displayAlert(const string &message) {
 }
 
 int vitalsOk(float temperature, float pulseRate, float spo2) {
-    if (isTemperatureOutOfRange(temperature)) {
-        displayAlert("Temperature critical!");
-        return 0;
-    } else if (isPulseRateOutOfRange(pulseRate)) {
-        displayAlert("Pulse Rate is out of range!");
-        return 0;
-    } else if (isSpo2OutOfRange(spo2)) {
-        displayAlert("Oxygen Saturation out of range!");
-        return 0;
+    VitalsCheck checks[] = {
+        {"Temperature critical!", isTemperatureOutOfRange},
+        {"Pulse Rate is out of range!", isPulseRateOutOfRange},
+        {"Oxygen Saturation out of range!", isSpo2OutOfRange}
+    };
+
+    for (const auto &check : checks) {
+        if (check.checkFunction == nullptr) {
+            continue;
+        }
+
+        if (check.checkFunction(temperature) ||
+            check.checkFunction(pulseRate) ||
+            check.checkFunction(spo2)) {
+            displayAlert(check.alertMessage);
+            return 0;
+        }
     }
+
     return 1;
 }
-
-// Complete the tests - cover all conditions
 
 void testVitals() {
     assert(!vitalsOk(99, 102, 70));
